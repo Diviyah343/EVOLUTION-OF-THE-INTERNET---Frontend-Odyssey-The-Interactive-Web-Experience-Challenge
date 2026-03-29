@@ -1,0 +1,594 @@
+<!--
+  COPILOT: This file uses semantic HTML5 structure.
+  All interactive elements have proper ARIA labels.
+  Three.js canvas is properly sized and positioned.
+  Era sections are structured for scroll animations.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolution of Internet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&family=VT323&family=Press+Start+2P&family=Bebas+Neue&family=Inter:wght@300;400;600&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Three.js via importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body class="intro-scroll-active">
+
+  <!-- ── CUSTOM CURSOR ── -->
+  <div id="cursor"></div>
+
+  <!-- ════════════════════════════════════════════
+       INTRO — scroll-driven; full-screen canvas + HTML overlays
+  ═══════════════════════════════════════════════ -->
+  <div class="intro-flow">
+    <div class="intro-sentinel" aria-hidden="true"></div>
+    <div id="introScrollSpacer" class="intro-scroll-spacer" aria-hidden="true"></div>
+  </div>
+
+  <section id="pcScene">
+    <canvas id="pcCanvas"></canvas>
+
+    <div class="intro-overlay" id="introOverlay">
+      <div class="intro-phase intro-phase--1" id="introPhase1">
+        <header class="intro-hero">
+          <h1 class="intro-heading">
+            <span class="intro-heading-line" id="introP1H1"></span>
+            <span class="intro-heading-line" id="introP1H2"></span>
+          </h1>
+          <p class="intro-tagline" id="introP1Tag"></p>
+        </header>
+
+        <aside class="intro-card intro-card--left" aria-label="Story begins">
+          <p class="intro-card-label" id="introP1LeftLabel"></p>
+          <p class="intro-card-stat" id="introP1LeftStat"></p>
+          <p class="intro-card-body" id="introP1LeftBody"></p>
+        </aside>
+
+        <aside class="intro-card intro-card--right" aria-label="Today">
+          <p class="intro-card-label" id="introP1RightLabel"></p>
+          <p class="intro-card-stat" id="introP1RightStat"></p>
+          <p class="intro-card-body" id="introP1RightBody"></p>
+        </aside>
+      </div>
+
+      <div class="intro-phase intro-phase--2" id="introPhase2">
+        <header class="intro-hero">
+          <h1 class="intro-heading">
+            <span class="intro-heading-line" id="introP2H1"></span>
+            <span class="intro-heading-line" id="introP2H2"></span>
+          </h1>
+        </header>
+
+        <aside class="intro-card intro-card--left" aria-label="Your guide">
+          <p class="intro-card-label" id="introP2LeftLabel"></p>
+          <p class="intro-card-stat" id="introP2LeftStat"></p>
+          <p class="intro-card-body" id="introP2LeftBody"></p>
+        </aside>
+
+        <aside class="intro-card intro-card--right" aria-label="Six eras">
+          <p class="intro-card-label" id="introP2RightLabel"></p>
+          <p class="intro-card-stat" id="introP2RightStat"></p>
+          <p class="intro-card-body" id="introP2RightBody"></p>
+        </aside>
+      </div>
+
+      <div class="intro-bottom">
+        <p class="intro-scroll-hint" id="introScrollHint">scroll to enter ↓</p>
+      </div>
+    </div>
+
+    <!-- Win95 Desktop -->
+    <div id="win95-desktop" style="display: none;">
+      <!-- Desktop Icons -->
+      <div class="desktop-icons">
+        <div class="desktop-icon" data-window="myComputer">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <rect x="8" y="24" width="16" height="4" fill="#808080"/>
+              <rect x="14" y="20" width="4" height="4" fill="#808080"/>
+              <rect x="4" y="8" width="24" height="16" fill="#C0C0C0" stroke="#808080" stroke-width="1"/>
+              <rect x="6" y="10" width="20" height="12" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <div class="icon-label">My Computer</div>
+        </div>
+        <div class="desktop-icon" data-window="network">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <rect x="2" y="8" width="12" height="8" fill="#C0C0C0" stroke="#808080" stroke-width="1"/>
+              <rect x="4" y="10" width="8" height="4" fill="#FFFFFF"/>
+              <rect x="18" y="8" width="12" height="8" fill="#C0C0C0" stroke="#808080" stroke-width="1"/>
+              <rect x="20" y="10" width="8" height="4" fill="#FFFFFF"/>
+              <line x1="14" y1="12" x2="18" y2="12" stroke="#808080" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="icon-label">Network Neighborhood</div>
+        </div>
+        <div class="desktop-icon" data-window="inbox">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <polygon points="4,8 16,16 28,8 28,24 4,24" fill="#FFFFFF" stroke="#808080" stroke-width="1"/>
+              <polygon points="16,4 14,8 18,8" fill="#FF0000"/>
+              <line x1="16" y1="4" x2="16" y2="12" stroke="#FF0000" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="icon-label">Inbox</div>
+        </div>
+        <div class="desktop-icon" data-window="recycle">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <rect x="8" y="12" width="16" height="16" fill="#C0C0C0" stroke="#808080" stroke-width="1"/>
+              <rect x="6" y="10" width="20" height="4" fill="#A0A0A0" stroke="#808080" stroke-width="1"/>
+              <rect x="14" y="8" width="4" height="2" fill="#808080"/>
+            </svg>
+          </div>
+          <div class="icon-label">Recycle Bin</div>
+        </div>
+        <div class="desktop-icon" data-window="internet">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <circle cx="16" cy="16" r="14" fill="none" stroke="#FFFF00" stroke-width="2"/>
+              <text x="16" y="22" text-anchor="middle" fill="#0000FF" font-family="Arial" font-size="20" font-style="italic">e</text>
+            </svg>
+          </div>
+          <div class="icon-label">The Internet</div>
+        </div>
+        <div class="desktop-icon" data-window="online">
+          <div class="icon-emoji">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <rect x="4" y="6" width="20" height="4" fill="#FFFF00" stroke="#808080" stroke-width="1"/>
+              <rect x="4" y="10" width="24" height="16" fill="#FFFF00" stroke="#808080" stroke-width="1"/>
+              <circle cx="12" cy="16" r="2" fill="#000000"/>
+              <circle cx="20" cy="16" r="2" fill="#000000"/>
+              <line x1="14" y1="16" x2="18" y2="16" stroke="#000000" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="icon-label">Online Services</div>
+        </div>
+      </div>
+
+      <!-- Taskbar -->
+      <div class="win95-taskbar">
+        <!-- Start Button -->
+        <div class="start-button" id="win95StartBtn">
+          <div class="start-flag"></div>
+          <div class="start-text">Start</div>
+        </div>
+        
+        <!-- Middle section for open windows -->
+        <div class="taskbar-middle" id="taskbarMiddle"></div>
+        
+        <!-- System Tray -->
+        <div class="system-tray">
+          <div class="system-clock" id="systemClock">12:00 AM</div>
+          <div class="calendar-icon" id="calendarIcon">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <rect x="2" y="4" width="20" height="16" fill="#00ff00" stroke="#00ff00" stroke-width="1"/>
+              <line x1="2" y1="8" x2="22" y2="8" stroke="#00ff00" stroke-width="1"/>
+              <text x="12" y="15" text-anchor="middle" font-size="6" fill="#000" font-weight="bold">1</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start Menu -->
+      <div class="start-menu" id="startMenu" style="display: none;">
+        <div class="start-menu-header">
+          <div class="windows-logo">Windows 95</div>
+        </div>
+        <div class="start-menu-items">
+          <div class="menu-item">📋 Programs ►</div>
+          <div class="menu-item">📄 Documents ►</div>
+          <div class="menu-item">⚙️ Settings ►</div>
+          <div class="menu-item">🔍 Find ►</div>
+          <div class="menu-item">❓ Help</div>
+          <div class="menu-divider">─────────────</div>
+          <div class="menu-item">🔌 Shut Down...</div>
+        </div>
+      </div>
+
+      <!-- Windows Container -->
+      <div class="windows-container" id="windowsContainer"></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       PHASE 2 — INTERNET ERAS
+       Step through with Next / Previous after intro scroll completes.
+  ═══════════════════════════════════════════════ -->
+  <div id="internetWorld" aria-hidden="true">
+
+    <!-- scanline overlay — always on top of era content -->
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <nav class="era-step-nav" aria-label="Step through eras">
+      <button type="button" id="eraPrev" class="era-step-btn">← Previous</button>
+      <span id="eraStepLabel" class="era-step-label">1969</span>
+      <button type="button" id="eraNext" class="era-step-btn">Next →</button>
+    </nav>
+
+    <!-- ── ERA 1: ARPANET 1969 ── -->
+    <section id="era-arpanet" class="era era-arpanet" data-era="0">
+      <div class="era-arpanet-wipe" id="eraArpanetWipe" aria-hidden="true">
+        <div class="era-arpanet-wipe-fill"></div>
+      </div>
+      <div class="era-arpanet-root" id="eraArpanetRoot">
+        <div class="era-arpanet-scanlines" aria-hidden="true"></div>
+        <div class="era-arpanet-vignette" aria-hidden="true"></div>
+        <div class="era-arpanet-split">
+          <div class="era-arpanet-terminal-col">
+            <div class="era-arpanet-terminal" id="arpanetTerminal">
+              <div class="era-arpanet-term-out" id="arpanetTermOut"></div>
+            </div>
+          </div>
+          <div class="era-arpanet-map-col">
+            <h2 class="era-arpanet-map-heading">ARPANET NETWORK — 1969</h2>
+            <div class="era-arpanet-canvas-wrap">
+              <canvas id="arpanetMapCanvas" width="800" height="560"></canvas>
+            </div>
+          </div>
+        </div>
+        <footer class="era-arpanet-taskbar">
+          <span class="era-arpanet-taskbar-left">ARPANET TERMINAL — 1969</span>
+          <span class="era-arpanet-taskbar-center">NODES ONLINE: 4</span>
+          <span class="era-arpanet-taskbar-right">
+            <time id="eraArpanetClock" datetime=""></time>
+            <button type="button" class="era-arpanet-cal-btn" id="eraArpanetCalBtn" aria-label="Open era calendar">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <rect x="2" y="4" width="20" height="16" fill="none" stroke="#00ff00" stroke-width="1"/>
+                <line x1="2" y1="8" x2="22" y2="8" stroke="#00ff00" stroke-width="1"/>
+                <text x="12" y="15" text-anchor="middle" font-size="6" fill="#00ff00" font-weight="bold">69</text>
+              </svg>
+            </button>
+          </span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- Shared era calendar (year jump + DOS boot for 1980–1989) -->
+    <div class="global-era-calendar" id="globalEraCalendar" hidden role="dialog" aria-modal="true" aria-labelledby="globalEraCalTitle">
+      <div class="global-era-calendar-inner">
+        <button type="button" class="global-era-calendar-close" id="globalEraCalendarClose" aria-label="Close calendar">×</button>
+        <p class="global-era-calendar-title" id="globalEraCalTitle">ERA CALENDAR</p>
+        <p class="global-era-calendar-hint">Select a year to jump. Years 1980–1989 boot into MS-DOS first.</p>
+        <div class="global-era-calendar-grid" id="globalEraCalendarGrid"></div>
+      </div>
+    </div>
+
+    <!-- ── ERA 2: EARLY INTERNET / DOS (1980s) ── -->
+    <section id="era-dos" class="era era-dos" data-era="1">
+      <div class="era-dos-boot" id="dosBootOverlay" hidden>
+        <div class="era-dos-boot-out" id="dosBootOut"></div>
+      </div>
+      <div class="era-dos-main" id="dosMainRoot">
+        <canvas class="era-dos-binary-canvas" id="dosBinaryCanvas" aria-hidden="true"></canvas>
+        <div class="era-dos-scanlines" aria-hidden="true"></div>
+        <div class="era-dos-split">
+          <div class="era-dos-left">
+            <div class="era-dos-banner">
+              <p class="era-dos-title">D.O.S</p>
+              <p class="era-dos-dept">DEPARTMENT OF ONLINE SYSTEMS</p>
+              <p class="era-dos-banner-prompt"><span class="era-dos-dim">C:\&gt;</span> <span class="era-dos-cursor">_</span></p>
+            </div>
+            <div class="era-dos-terminal-wrap">
+              <div class="era-dos-terminal" id="dosTerminal">
+                <div class="era-dos-term-out" id="dosTermOut"></div>
+              </div>
+            </div>
+          </div>
+          <div class="era-dos-right">
+            <div class="era-dos-bbs" id="dosBbs">
+              <div class="era-dos-bbs-header" id="dosBbsHeader"></div>
+              <div class="era-dos-bbs-messages" id="dosBbsMessages"></div>
+            </div>
+          </div>
+        </div>
+        <footer class="era-dos-taskbar">
+          <span class="era-dos-taskbar-left">MS-DOS 6.22</span>
+          <span class="era-dos-taskbar-center">BAUD RATE: 2400 | NODE: 1</span>
+          <span class="era-dos-taskbar-right">
+            <time id="eraDosClock" datetime=""></time>
+            <button type="button" class="era-dos-cal-btn" id="eraDosCalBtn" aria-label="Open era calendar">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <rect x="2" y="4" width="20" height="16" fill="none" stroke="#00ff00" stroke-width="1"/>
+                <line x1="2" y1="8" x2="22" y2="8" stroke="#00ff00" stroke-width="1"/>
+                <text x="12" y="15" text-anchor="middle" font-size="6" fill="#00ff00" font-weight="bold">85</text>
+              </svg>
+            </button>
+          </span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ── ERA 3: 90s WORLD WIDE WEB (Win95 + GeoCities) ── -->
+    <section id="era-web90s" class="era era-web90s" data-era="2">
+      <!-- Full-screen intro card -->
+      <div id="web90sIntroScreen" class="web90s-intro-screen">
+        <div class="web90s-intro-content">
+          <div class="web90s-intro-label">1990 — 1999</div>
+          <h1 class="web90s-intro-heading" id="web90sIntroHeading">The World Wide Web.</h1>
+          <h2 class="web90s-intro-subheading" id="web90sIntroSubheading">The internet gets a face.</h2>
+          <p class="web90s-intro-body" id="web90sIntroBody">
+            In 1991, Tim Berners-Lee introduced the World Wide Web. Suddenly the internet had pages, links, and images. GeoCities let anyone build a homepage. Netscape made browsing mainstream. The web was weird, wonderful, and completely new.
+          </p>
+          <div class="web90s-intro-continue" id="web90sIntroContinue">— click anywhere to continue —</div>
+        </div>
+      </div>
+
+      <div id="win95-desktop">
+        <div class="desktop-icons">
+          <div class="desktop-icon" data-icon="computer">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Monitor body -->
+                <rect x="2" y="2" width="28" height="18" fill="#c0c0c0" stroke="#dfdfdf" stroke-width="2"/>
+                <rect x="3" y="3" width="26" height="16" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+                <!-- Screen -->
+                <rect x="5" y="5" width="22" height="13" fill="#000080" stroke="#000080" stroke-width="1"/>
+                <rect x="6" y="6" width="20" height="11" fill="#0050a0"/>
+                <text x="16" y="14" text-anchor="middle" fill="#00ff00" font-size="7" font-family="monospace" font-weight="bold">C:</text>
+                <!-- Stand -->
+                <rect x="12" y="20" width="8" height="4" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+                <!-- Floppy drives -->
+                <rect x="8" y="24" width="5" height="5" fill="#808080" stroke="#000" stroke-width="0.5"/>
+                <rect x="9" y="25" width="3" height="3" fill="#000"/>
+                <rect x="17" y="24" width="5" height="5" fill="#808080" stroke="#000" stroke-width="0.5"/>
+                <rect x="18" y="25" width="3" height="3" fill="#000"/>
+              </svg>
+            </div>
+            <div class="icon-label">My Computer</div>
+          </div>
+          <div class="desktop-icon" data-icon="network">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Left computer -->
+                <rect x="1" y="4" width="13" height="10" fill="#c0c0c0" stroke="#dfdfdf" stroke-width="1"/>
+                <rect x="2" y="5" width="11" height="8" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+                <rect x="3" y="6" width="9" height="6" fill="#000080"/>
+                <!-- Right computer -->
+                <rect x="18" y="4" width="13" height="10" fill="#c0c0c0" stroke="#dfdfdf" stroke-width="1"/>
+                <rect x="19" y="5" width="11" height="8" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+                <rect x="20" y="6" width="9" height="6" fill="#000080"/>
+                <!-- Connection cable -->
+                <path d="M 14 12 Q 16 16 18 12" stroke="#000" stroke-width="1" fill="none"/>
+                <!-- Bottom connectors -->
+                <circle cx="8" cy="22" r="3" fill="#dfdfdf" stroke="#808080" stroke-width="1"/>
+                <circle cx="24" cy="22" r="3" fill="#dfdfdf" stroke="#808080" stroke-width="1"/>
+                <line x1="8" y1="25" x2="24" y2="25" stroke="#000" stroke-width="1"/>
+              </svg>
+            </div>
+            <div class="icon-label">Network Neighborhood</div>
+          </div>
+          <div class="desktop-icon" data-icon="inbox">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Envelope body -->
+                <rect x="3" y="8" width="26" height="17" fill="#dfdfdf" stroke="#dfdfdf" stroke-width="1"/>
+                <rect x="4" y="9" width="24" height="15" fill="#dfdfdf" stroke="#808080" stroke-width="1"/>
+                <!-- Envelope flap -->
+                <polygon points="4,9 16,15 28,9" fill="#c0c0c0" stroke="#808080" stroke-width="1"/>
+                <!-- Envelope back -->
+                <polygon points="4,9 16,15 28,9" fill="none" stroke="#000" stroke-width="0.5"/>
+                <!-- Envelope lines (paper effect) -->
+                <line x1="6" y1="14" x2="26" y2="14" stroke="#000" stroke-width="0.5"/>
+                <line x1="6" y1="17" x2="26" y2="17" stroke="#000" stroke-width="0.5"/>
+                <line x1="6" y1="20" x2="26" y2="20" stroke="#000" stroke-width="0.5"/>
+                <!-- Red inbox flag -->
+                <rect x="22" y="4" width="8" height="5" fill="#ff0000" stroke="#000" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="icon-label">Inbox</div>
+          </div>
+          <div class="desktop-icon" data-icon="recycle">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Trash can lid -->
+                <rect x="9" y="6" width="14" height="3" fill="#c0c0c0" stroke="#dfdfdf" stroke-width="1"/>
+                <rect x="9" y="6" width="14" height="3" fill="none" stroke="#808080" stroke-width="0.5"/>
+                <!-- Lid handle -->
+                <path d="M 14 5 Q 16 3 18 5" stroke="#000" stroke-width="1" fill="none"/>
+                <!-- Trash can body -->
+                <path d="M 6 10 L 8 26 Q 8 28 10 28 L 22 28 Q 24 28 24 26 L 26 10 Z" fill="#808080" stroke="#000" stroke-width="1"/>
+                <!-- Can shading -->
+                <path d="M 8 10 L 10 26" stroke="#000" stroke-width="0.5" opacity="0.5"/>
+                <path d="M 24 10 L 22 26" stroke="#000" stroke-width="0.5" opacity="0.5"/>
+                <!-- Crushed paper details -->
+                <path d="M 10 12 L 12 24" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+                <path d="M 14 12 L 14 26" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+                <path d="M 18 12 L 20 24" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="icon-label">Recycle Bin</div>
+          </div>
+          <div class="desktop-icon" data-icon="internet">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Globe background -->
+                <circle cx="16" cy="16" r="13" fill="#87ceeb" stroke="#000" stroke-width="1"/>
+                <!-- Continents (simplified) -->
+                <path d="M 8 12 Q 10 10 12 12 L 12 16 Q 10 18 8 16 Z" fill="#228b22" stroke="#000" stroke-width="0.5"/>
+                <path d="M 18 8 Q 21 7 23 10 L 22 14 Q 20 15 18 12 Z" fill="#228b22" stroke="#000" stroke-width="0.5"/>
+                <path d="M 10 20 Q 12 22 14 22 L 15 20 Q 12 18 10 20 Z" fill="#228b22" stroke="#000" stroke-width="0.5"/>
+                <!-- Latitude/longitude lines -->
+                <circle cx="16" cy="16" r="13" fill="none" stroke="#0000ff" stroke-width="0.5" opacity="0.6"/>
+                <ellipse cx="16" cy="16" rx="13" ry="6" fill="none" stroke="#0000ff" stroke-width="0.5" opacity="0.6"/>
+                <line x1="3" y1="16" x2="29" y2="16" stroke="#0000ff" stroke-width="0.5" opacity="0.6"/>
+                <!-- Orbit rings -->
+                <ellipse cx="16" cy="16" rx="12" ry="5" fill="none" stroke="#ff6600" stroke-width="0.5"/>
+                <!-- Center point -->
+                <circle cx="16" cy="16" r="1.5" fill="#000"/>
+              </svg>
+            </div>
+            <div class="icon-label">The Internet</div>
+          </div>
+          <div class="desktop-icon" data-icon="services">
+            <div class="icon-emoji">
+              <svg viewBox="0 0 32 32" width="32" height="32">
+                <!-- Main folder -->
+                <polygon points="4,8 10,4 26,4 26,24 4,24" fill="#dfdf00" stroke="#dfdfdf" stroke-width="1.5"/>
+                <polygon points="4,8 10,4 26,4 26,24 4,24" fill="none" stroke="#808080" stroke-width="1"/>
+                <!-- Folder tab -->
+                <polygon points="4,8 10,4 16,4 16,8" fill="#dfdf00" stroke="#dfdfdf" stroke-width="1"/>
+                <!-- Folder contents (lines) -->
+                <line x1="6" y1="10" x2="24" y2="10" stroke="#000" stroke-width="0.5"/>
+                <line x1="6" y1="13" x2="24" y2="13" stroke="#000" stroke-width="0.5"/>
+                <line x1="6" y1="16" x2="24" y2="16" stroke="#000" stroke-width="0.5"/>
+                <line x1="6" y1="19" x2="24" y2="19" stroke="#000" stroke-width="0.5"/>
+                <!-- Globe icon on folder -->
+                <circle cx="22" cy="20" r="3" fill="#87ceeb" stroke="#000" stroke-width="0.5"/>
+                <path d="M 20 20 Q 22 19 24 20" fill="none" stroke="#228b22" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="icon-label">Online Services</div>
+          </div>
+        </div>
+        <div class="taskbar">
+          <button class="start-btn">
+            <span class="flag-win"></span> Start
+          </button>
+          <div class="tray">
+            <time class="tray-clock" id="trayClock"></time>
+            <button class="tray-cal" id="calBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <rect x="2" y="4" width="20" height="16" fill="none" stroke="#000" stroke-width="1"/>
+                <line x1="2" y1="8" x2="22" y2="8" stroke="#000" stroke-width="1"/>
+                <rect x="6" y="10" width="12" height="8" fill="#c0c0c0" stroke="#000" stroke-width="0.5"/>
+                <text x="12" y="15" text-anchor="middle" font-size="5" fill="#000" font-weight="bold">95</text>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <!-- Calendar Popup -->
+        <div id="eraCalendar" class="era-calendar-popup" hidden>
+          <div class="era-calendar-header">
+            <button class="era-calendar-nav-prev">&nbsp;&lt;&nbsp;</button>
+            <span class="era-calendar-month-year" id="calendarMonthYear"></span>
+            <button class="era-calendar-nav-next">&nbsp;&gt;&nbsp;</button>
+          </div>
+          <div class="era-calendar-weekdays">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <div class="era-calendar-days" id="eraCalendarDays"></div>
+          <!-- Era Navigation Shortcuts -->
+          <div class="era-calendar-shortcuts">
+            <div class="era-shortcuts-title">Jump to era:</div>
+            <div class="era-shortcuts-buttons">
+              <button class="era-shortcut-btn" data-era="intro">Intro</button>
+              <button class="era-shortcut-btn" data-era="arpanet">1969</button>
+              <button class="era-shortcut-btn" data-era="dos">1985</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ERA 4: SOCIAL MEDIA 2004 ── -->
+    <section id="era4" class="era" data-era="3">
+      <!-- Facebook-style top bar -->
+      <div class="social-topbar">
+        <span class="social-logo">the<strong>internet</strong></span>
+        <span class="social-nav-items">
+          <span>Home</span>
+          <span>Profile</span>
+          <span>Friends</span>
+        </span>
+        <span class="social-user">👤 You</span>
+      </div>
+
+      <div class="social-layout">
+        <!-- Left: profile card -->
+        <div class="social-sidebar">
+          <div class="profile-card">
+            <div class="profile-avatar">👤</div>
+            <p class="profile-name">You</p>
+            <p class="profile-meta">Online since 1969</p>
+            <p class="profile-meta">Friends: 347</p>
+            <p class="profile-meta">Status: It's complicated</p>
+          </div>
+        </div>
+
+        <!-- Center: feed -->
+        <div class="social-feed" id="socialFeed">
+          <!-- Posts injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ERA 5: MODERN / AI 2024 ── -->
+    <section id="era5" class="era" data-era="4">
+      <!-- Data scan readout -->
+      <div class="scan-readout" id="scanReadout">
+        <p class="scan-title">SCANNING USER<span class="blink-cursor">_</span></p>
+        <div class="scan-rows" id="scanRows">
+          <!-- injected by JS -->
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="modern-stats" id="modernStats">
+        <div class="stat-card">
+          <span class="stat-num">5.4B</span>
+          <span class="stat-label">people online today</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">4.9hrs</span>
+          <span class="stat-label">avg daily screen time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">500M</span>
+          <span class="stat-label">tweets sent today</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">47</span>
+          <span class="stat-label">third parties have your data</span>
+        </div>
+      </div>
+
+      <!-- AI Chat bar -->
+      <div class="ai-chat" id="aiChat">
+        <div class="ai-messages" id="aiMessages"></div>
+        <div class="ai-input-row">
+          <input
+            type="text"
+            id="aiInput"
+            class="ai-input"
+            placeholder="Ask the internet anything..."
+          />
+          <button class="ai-send" id="aiSend">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ERA 6: Closing ── -->
+    <section id="era6" class="era" data-era="5">
+      <div class="closing-screen" id="closingScreen">
+        <p class="closing-year">1969</p>
+        <p class="closing-message">LO</p>
+        <p class="closing-divider">· · ·</p>
+        <p class="closing-year">2024</p>
+        <p class="closing-message closing-fade" id="closingFinal"></p>
+        <p class="closing-sub">
+          The first message crashed after two letters.<br/>
+          The network never crashed again.<br/><br/>
+          <em>You have been inside the machine since the moment you clicked.</em>
+        </p>
+        <p class="closing-credit">[ Thank you for connecting ]</p>
+      </div>
+    </section>
+
+  </div><!-- end #internetWorld -->
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

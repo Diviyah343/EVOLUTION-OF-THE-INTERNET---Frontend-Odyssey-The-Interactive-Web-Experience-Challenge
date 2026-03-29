@@ -1,0 +1,2436 @@
+/*
+  COPILOT: This file uses CSS custom properties for era-specific theming.
+  Each era has its own color palette defined in :root.
+  All animations use CSS transforms for performance.
+  Responsive design uses mobile-first approach.
+*/
+
+/* ── Global reset & base ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* ── Global ── */
+  --void:           #000000;
+  --dark-room:      #0a0a0f;
+
+  /* ── Era 1: ARPANET ── */
+  --arpa-bg:        #0d0d0d;
+  --arpa-green:     #00ff41;
+  --arpa-dim:       #006616;
+  --arpa-font:      'VT323', monospace;
+
+  /* ── Era 2: Early Web ── */
+  --web-bg:         #c0c0c0;
+  --web-blue:       #0000ee;
+  --web-visited:    #551a8b;
+  --web-text:       #000000;
+  --web-font:       'Comic Neue', cursive;
+
+  /* ── Era 3: Dot-com ── */
+  --dotcom-bg:      #001f5b;
+  --dotcom-gold:    #ffd700;
+  --dotcom-red:     #ff0000;
+  --dotcom-font:    'Bebas Neue', sans-serif;
+
+  /* ── Era 4: Social / Web 2.0 ── */
+  --social-bg:      #e9ebee;
+  --social-blue:    #3b5998;
+  --social-white:   #ffffff;
+  --social-font:    'Inter', sans-serif;
+
+  /* ── Era 5: Modern / AI ── */
+  --modern-bg:      #080810;
+  --modern-accent:  #6c63ff;
+  --modern-glass:   rgba(255,255,255,0.05);
+  --modern-border:  rgba(255,255,255,0.1);
+  --modern-font:    'Inter', sans-serif;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--modern-font);
+  background: var(--void);
+  color: var(--social-white);
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  cursor: none;
+}
+
+body.intro-scroll-active {
+  overflow-y: auto;
+}
+
+/* ── Custom cursor (#cursor) ── */
+#cursor {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  background: var(--modern-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transition: transform 0.08s ease, background 0.3s;
+}
+
+#cursor.cursor-hover {
+  transform: translate(-6px, -6px) scale(1.5);
+  background: var(--arpa-green);
+}
+
+/* ── Intro: flow space for scroll (canvas is fixed, does not add height) ── */
+.intro-flow {
+  position: relative;
+  z-index: 0;
+}
+
+.intro-sentinel {
+  min-height: 100vh;
+  pointer-events: none;
+}
+
+.intro-scroll-spacer {
+  height: 220vh;
+  pointer-events: none;
+}
+
+/* ── PC Scene — full-screen fixed canvas background ── */
+#pcScene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#pcCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* HTML overlays — center ~40% of viewport kept empty for the 3D model */
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.intro-phase {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.intro-phase--2 {
+  opacity: 0;
+}
+
+.intro-hero {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  max-width: 300px;
+  pointer-events: none;
+}
+
+.intro-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.intro-heading-line {
+  display: block;
+}
+
+.intro-tagline {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: #888888;
+  margin-top: 1rem;
+  text-transform: uppercase;
+}
+
+.intro-card {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(280px, calc(30vw - 1.5rem));
+  max-width: 280px;
+  padding: 24px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.intro-card--left {
+  top: 58vh;
+  left: 2rem;
+  transform: none;
+  margin-top: 0;
+}
+
+.intro-card--right {
+  top: 58vh;
+  right: clamp(0.75rem, 2.5vw, 2rem);
+  transform: none;
+}
+
+.intro-card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: #888888;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+}
+
+.intro-card-stat {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+
+.intro-card-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #aaaaaa;
+  margin: 0;
+}
+
+.intro-bottom {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 4vh, 2.5rem);
+  transform: translateX(-50%);
+  text-align: center;
+  width: min(90vw, 420px);
+  pointer-events: none;
+}
+
+.intro-scroll-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #888888;
+  letter-spacing: 0.12em;
+  margin: 0;
+  opacity: 1;
+}
+
+.typewriter-cursor {
+  animation: typewriter-cursor-blink 0.85s step-end infinite;
+}
+
+@keyframes typewriter-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  .intro-card {
+    max-width: min(240px, 42vw);
+    padding: 18px;
+  }
+
+  .intro-card-stat {
+    font-size: 2rem;
+  }
+
+  .intro-heading {
+    font-size: clamp(2rem, 9vw, 3.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .intro-card--left {
+    top: 58vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(calc(100vw - 2rem), 280px);
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .intro-card--right {
+    display: none;
+  }
+}
+
+/* ── Internet world: fixed viewport, no page scroll ── */
+#internetWorld {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+}
+
+#internetWorld.is-open {
+  display: block;
+}
+
+#internetWorld .era {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: 4.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+#internetWorld .era:not(.is-active) {
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#internetWorld .era.is-active {
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+#internetWorld .era.era-arpanet {
+  overflow: hidden;
+  padding: 0;
+  padding-bottom: 4.5rem;
+}
+
+.era-step-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.65rem 1rem;
+  background: rgba(8, 8, 16, 0.92);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--modern-font);
+}
+
+.era-step-btn {
+  font-family: var(--arpa-font);
+  font-size: 0.95rem;
+  color: var(--arpa-green);
+  background: transparent;
+  border: 1px solid var(--arpa-green);
+  padding: 0.45rem 1rem;
+  cursor: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.era-step-btn:hover:not(:disabled) {
+  background: var(--arpa-green);
+  color: var(--void);
+}
+
+.era-step-btn:disabled {
+  opacity: 0.35;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.era-step-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  min-width: 10rem;
+  text-align: center;
+}
+
+/* ── Scanlines overlay (.scanlines) ── */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  animation: scanlines-flicker 0.1s linear infinite;
+}
+
+@keyframes scanlines-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+/* ── Era 1: ARPANET (scoped under .era-arpanet) ── */
+.era-arpanet {
+  background: #000000;
+  font-family: 'Space Mono', var(--arpa-font), monospace;
+  color: #00ff41;
+}
+
+/* CRT convex screen overlay (era div only; scanlines unchanged below) */
+.era-arpanet::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+.era-arpanet::after {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 60%;
+  height: 40%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: rotate(-20deg);
+}
+
+.era-arpanet-wipe {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.era-arpanet-wipe.is-playing {
+  display: block;
+}
+
+.era-arpanet-wipe-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background: #000000;
+  transform-origin: bottom center;
+  border-top: 4px solid #00ff41;
+  box-shadow: 0 -6px 28px rgba(0, 255, 65, 0.85);
+}
+
+.era-arpanet-wipe.is-playing .era-arpanet-wipe-fill {
+  animation: era-arpanet-wipe-shrink 1s linear forwards;
+}
+
+@keyframes era-arpanet-wipe-shrink {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+.era-arpanet-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #000000;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+}
+
+.era-arpanet-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 65, 0.03),
+    rgba(0, 255, 65, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.45;
+}
+
+.era-arpanet-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.75);
+  background: radial-gradient(
+    ellipse 85% 75% at 50% 45%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.era-arpanet-split {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.era-arpanet-terminal-col {
+  width: 60%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px dashed rgba(0, 255, 65, 0.45);
+  box-sizing: border-box;
+}
+
+.era-arpanet-terminal {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1.1rem;
+  overflow: hidden;
+  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
+  line-height: 1.55;
+  color: #00ff41;
+}
+
+.era-arpanet-term-out {
+  height: 100%;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.era-arpanet-line {
+  margin: 0 0 0.15em;
+}
+
+.era-arpanet-cursor-block {
+  display: inline-block;
+  margin-left: 1px;
+  animation: era-arpanet-cursor-blink 0.85s step-end infinite;
+  color: #00ff41;
+}
+
+@keyframes era-arpanet-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.era-arpanet-map-col {
+  width: 40%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.65rem 0.75rem 0.5rem;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.era-arpanet-map-heading {
+  margin: 0 0 0.4rem;
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(0.55rem, 0.95vw, 0.68rem);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(0, 255, 65, 0.85);
+}
+
+.era-arpanet-canvas-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.era-arpanet-canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+/* ── ERA 3: 90s WORLD WIDE WEB (Windows 95 + GeoCities) ── */
+#era-web90s {
+  background: #008080;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Win95 Desktop */
+#win95-desktop {
+  position: absolute;
+  inset: 0;
+  background: #008080;
+  overflow: hidden;
+}
+
+#win95-desktop.active,
+#win95-desktop[style*="display: block"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  background: #008080 !important;
+  z-index: 100 !important;
+}
+
+/* Desktop Icons */
+.desktop-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 36px); /* Account for taskbar */
+  padding: 20px;
+}
+
+.desktop-icon {
+  position: relative;
+  display: inline-block;
+  margin: 0 0 15px 15px;
+  cursor: none;
+  text-align: center;
+  width: 80px;
+}
+
+.desktop-icon:hover {
+  background: rgba(0, 0, 128, 0.1);
+  border-radius: 2px;
+}
+
+.icon-emoji {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.icon-label {
+  font-size: 11px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+/* Win95 Taskbar */
+.win95-taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 36px;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.start-button {
+  position: relative;
+  margin-left: 8px;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  padding: 2px 8px 2px 12px;
+  background: #c0c0c0;
+  border: 2px solid #ffffff;
+  border-right: none;
+  border-bottom: 2px solid #808080;
+  border-left: 2px solid #808080;
+  font-weight: bold;
+}
+
+.start-button:hover {
+  background: #1084d0;
+}
+
+.start-flag {
+  width: 16px;
+  height: 14px;
+  background: #ff0000;
+  margin-right: 6px;
+  clip-path: polygon(0 0, 8px 0, 16px 7px, 16px 14px, 0 0, 0 7px, 8px 14px);
+}
+
+.start-text {
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.taskbar-middle {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.system-tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 8px;
+}
+
+.system-clock {
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.calendar-icon {
+  font-size: 16px;
+  cursor: none;
+}
+
+/* Start Menu */
+.start-menu {
+  position: fixed;
+  bottom: 36px;
+  left: 0;
+  background: #c0c0c0;
+  border: 2px solid #000080;
+  border-top: none;
+  min-width: 200px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+
+.start-menu-header {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: white;
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.start-menu-items {
+  padding: 8px;
+}
+
+.menu-item {
+  color: white;
+  padding: 4px 8px;
+  cursor: none;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item:hover {
+  background: #000080;
+}
+
+.menu-divider {
+  color: #808080;
+  padding: 4px 8px;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* Windows Container */
+.windows-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 36px);
+  pointer-events: none;
+}
+
+/* Win95 Window Styling */
+.win95-window {
+  position: absolute;
+  background: #c0c0c0;
+  border: 2px solid #ffffff;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #808080;
+  font-family: Arial, sans-serif;
+  min-width: 200px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.win95-titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: white;
+  padding: 2px 4px;
+  font-weight: bold;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.win95-title {
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.win95-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win95-control {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: 1px solid #ffffff;
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+}
+
+.win95-body {
+  padding: 8px;
+  min-height: 100px;
+  color: black;
+  font-size: 11px;
+}
+
+.era-arpanet-taskbar {
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  background: #000000;
+  border-top: 1px solid rgba(0, 255, 65, 0.25);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #00ff41;
+  gap: 0.5rem;
+}
+
+.era-arpanet-taskbar-center {
+  flex: 1;
+  text-align: center;
+}
+
+.era-arpanet-taskbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.era-arpanet-cal-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #00ff41;
+}
+
+.era-arpanet-cal-btn:hover {
+  filter: brightness(1.2);
+}
+
+.era-arpanet-calendar-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.72);
+  padding: 1rem;
+}
+
+.era-arpanet-calendar-pop[hidden] {
+  display: none;
+}
+
+.era-arpanet-calendar-pop-inner {
+  position: relative;
+  max-width: 22rem;
+  padding: 1.25rem 1.5rem;
+  background: #000;
+  border: 1px dashed #00ff41;
+  color: #00ff41;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  box-shadow: 0 0 24px rgba(0, 255, 65, 0.2);
+}
+
+.era-arpanet-calendar-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  background: none;
+  border: none;
+  color: #00ff41;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.era-arpanet-calendar-pop-title {
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+}
+
+.era-arpanet-calendar-pop-body {
+  margin: 0;
+  opacity: 0.9;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── Global era calendar (year jump) ── */
+.global-era-calendar {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.78);
+  padding: 1rem;
+}
+
+.global-era-calendar[hidden] {
+  display: none;
+}
+
+.global-era-calendar-inner {
+  position: relative;
+  max-width: 28rem;
+  width: 100%;
+  padding: 1.25rem 1.35rem;
+  background: #000;
+  border: 2px dashed #00ffff;
+  color: #00ffff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  line-height: 1.8;
+  box-shadow: 0 0 32px rgba(0, 255, 255, 0.15);
+}
+
+.global-era-calendar-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  background: none;
+  border: none;
+  color: #00ffff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.global-era-calendar-title {
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  font-size: 0.55rem;
+}
+
+.global-era-calendar-hint {
+  margin: 0 0 1rem;
+  opacity: 0.85;
+  color: #00ffff;
+}
+
+.global-era-calendar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.global-era-calendar-grid button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.42rem;
+  padding: 0.45rem 0.55rem;
+  background: #000;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  cursor: pointer;
+}
+
+.global-era-calendar-grid button:hover {
+  background: rgba(0, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* ── Era 2: DOS / Early Internet (scoped under .era-dos) ── */
+#internetWorld .era.era-dos {
+  overflow: hidden;
+  padding: 0;
+  padding-bottom: 4.5rem;
+}
+
+.era-dos {
+  background: #000000;
+  font-family: 'Press Start 2P', cursive;
+  color: #00ffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* CRT convex screen overlay (era div only; scanlines unchanged below) */
+.era-dos::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+.era-dos::after {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 60%;
+  height: 40%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: rotate(-20deg);
+}
+
+.era-dos-boot {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  padding-bottom: 4.5rem;
+  box-sizing: border-box;
+  background: #000000;
+  overflow: hidden;
+}
+
+.era-dos-boot[hidden] {
+  display: none !important;
+}
+
+.era-dos-boot-out {
+  margin: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.45rem, 1vw, 0.58rem);
+  line-height: 1.65;
+  color: #00ffff;
+  white-space: pre-wrap;
+}
+
+.era-dos-boot .era-dos-line {
+  margin: 0 0 0.35em;
+}
+
+.era-dos-boot-cursor {
+  display: none;
+}
+
+.era-dos.era-dos-flicker .era-dos-main {
+  animation: era-dos-screen-flicker 0.2s ease-out 1;
+}
+
+@keyframes era-dos-screen-flicker {
+  0% {
+    opacity: 1;
+    filter: none;
+  }
+  40% {
+    opacity: 0.15;
+    filter: brightness(2) contrast(0.8);
+  }
+  70% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+.era-dos-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  background: #000000;
+  overflow: hidden;
+}
+
+.era-dos-main.is-hidden-boot {
+  visibility: hidden;
+}
+
+.era-dos-binary-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.era-dos-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 255, 0.04),
+    rgba(0, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+}
+
+.era-dos-split {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.era-dos-left {
+  flex: 0 0 55%;
+  max-width: 55%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px dashed rgba(0, 255, 255, 0.5);
+  box-sizing: border-box;
+}
+
+.era-dos-banner {
+  flex-shrink: 0;
+  padding: 0.65rem 0.85rem 0.5rem;
+  color: #00ffff;
+}
+
+.era-dos-title {
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.65rem, 2.2vw, 1.1rem);
+  line-height: 1.3;
+  color: #00ffff;
+  letter-spacing: 0.12em;
+}
+
+.era-dos-dept {
+  margin: 0.5rem 0 0.25rem;
+  font-size: clamp(0.38rem, 0.85vw, 0.48rem);
+  color: #ffffff;
+  letter-spacing: 0.06em;
+}
+
+.era-dos-banner-prompt {
+  margin: 0.15rem 0 0;
+  font-size: clamp(0.4rem, 0.9vw, 0.5rem);
+  color: #00ffff;
+}
+
+.era-dos-dim {
+  color: rgba(0, 255, 255, 0.75);
+}
+
+.era-dos-cursor {
+  display: inline-block;
+  animation: era-dos-cursor-blink 0.75s step-end infinite;
+  color: #00ffff;
+}
+
+@keyframes era-dos-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.era-dos-terminal-wrap {
+  flex: 1;
+  min-height: 0;
+  padding: 0 0.85rem 0.5rem;
+}
+
+.era-dos-terminal {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: clamp(0.38rem, 0.85vw, 0.48rem);
+  line-height: 1.55;
+  color: #00ffff;
+}
+
+.era-dos-term-out {
+  min-height: min-content;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.era-dos-line {
+  margin: 0 0 0.2em;
+}
+
+.era-dos-line--white {
+  color: #ffffff;
+}
+
+.era-dos-menu-btn {
+  display: block;
+  width: 100%;
+  margin: 0 0 0.2em;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.era-dos-menu-btn:hover,
+.era-dos-menu-btn:focus-visible {
+  color: #ffffff;
+  outline: 1px dashed #00ffff;
+  outline-offset: 2px;
+}
+
+.era-dos-right {
+  flex: 0 0 45%;
+  max-width: 45%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0.65rem;
+  box-sizing: border-box;
+}
+
+.era-dos-bbs {
+  flex: 1 1 auto;
+  min-height: min-content;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  font-size: clamp(0.35rem, 0.78vw, 0.45rem);
+  line-height: 1.5;
+  color: #00ffff;
+}
+
+.era-dos-bbs-header {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+  white-space: pre-wrap;
+  color: #00ffff;
+}
+
+.era-dos-bbs-messages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+  white-space: pre-wrap;
+}
+
+.era-dos-msg-block {
+  margin-bottom: 0.85rem;
+}
+
+.era-dos-taskbar {
+  position: relative;
+  z-index: 6;
+  flex-shrink: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.65rem;
+  background: #000000;
+  border-top: 1px solid rgba(0, 255, 255, 0.28);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.42rem;
+  gap: 0.4rem;
+}
+
+.era-dos-taskbar-left {
+  color: #ffffff;
+}
+
+.era-dos-taskbar-center {
+  flex: 1;
+  text-align: center;
+  color: #00ffff;
+}
+
+.era-dos-taskbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #00ffff;
+}
+
+.era-dos-cal-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.55rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #00ffff;
+}
+
+.era-dos-cal-btn:hover {
+  filter: brightness(1.15);
+}
+
+/* ── Era 3: 90s Web / Windows 95 desktop (.era-web90s) ── */
+#internetWorld .era.era-web90s {
+  overflow: hidden;
+  padding: 0;
+  padding-bottom: 4.5rem;
+  background: #008080;
+  min-height: 100%;
+}
+
+.era-web90s {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  font-family: VT323, 'Courier New', Courier, monospace;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='18'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='1' d='M1 1h1v14H1z'/%3E%3Cpath fill='%23000' d='M2 2h8v2H2zm0 3h6v1H2z'/%3E%3C/svg%3E")
+      0 0,
+    crosshair;
+  box-sizing: border-box;
+}
+
+.era-web90s * {
+  cursor: inherit;
+}
+
+.era-web90s button,
+.era-web90s a,
+.era-web90s input {
+  cursor: inherit;
+}
+
+/* ── Web90s Intro Screen ── */
+.web90s-intro-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.web90s-intro-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.web90s-intro-content {
+  text-align: center;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.web90s-intro-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: #888888;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.web90s-intro-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  font-size: 7vw;
+  color: #ffffff;
+  margin: 0;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  min-height: 10vw;
+  opacity: 0;
+}
+
+.web90s-intro-heading.typing-done {
+  opacity: 1;
+}
+
+.web90s-intro-subheading {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 2vw;
+  color: #aaaaaa;
+  margin: 0;
+  margin-bottom: 40px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+}
+
+.web90s-intro-subheading.fade-in {
+  opacity: 1;
+}
+
+.web90s-intro-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  color: #888888;
+  line-height: 1.8;
+  max-width: 500px;
+  margin: 0 auto 60px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+}
+
+.web90s-intro-body.fade-in {
+  opacity: 1;
+}
+
+.web90s-intro-continue {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: #555555;
+  opacity: 0;
+  animation: blink 1.5s infinite;
+  margin-top: 60px;
+}
+
+.web90s-intro-continue.show {
+  opacity: 1;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+
+.era-web90s #win95-desktop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 36px);
+  background: #008080;
+  z-index: 10;
+}
+
+.era-web90s .desktop-icons {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.era-web90s .desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+}
+
+.era-web90s .desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.era-web90s .icon-emoji {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.era-web90s .icon-label {
+  text-align: center;
+  max-width: 80px;
+  word-wrap: break-word;
+}
+
+.era-web90s .taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 36px;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  box-sizing: border-box;
+  z-index: 99999;
+}
+
+.era-web90s .start-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px 0 4px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-weight: bold;
+  font-size: 11px;
+  color: #000;
+  cursor: pointer;
+}
+
+.era-web90s .start-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.era-web90s .flag-win {
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(to right, #ff0000 25%, #00ff00 25% 50%, #0000ff 50% 75%, #ffff00 75%);
+  border: 1px solid #000;
+  box-sizing: border-box;
+}
+
+.era-web90s .tray {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #c0c0c0;
+}
+
+.era-web90s .tray-clock {
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  color: #000;
+  min-width: 50px;
+  text-align: right;
+}
+
+.era-web90s .tray-cal {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000;
+}
+
+/* Calendar Popup */
+.era-calendar-popup {
+  position: absolute;
+  bottom: 28px;
+  right: 0;
+  width: 200px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  padding: 4px;
+  box-shadow: 1px 1px 0 #000;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  z-index: 100;
+}
+
+.era-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 2px;
+  background: linear-gradient(90deg, #000080, #1084d7);
+  color: white;
+  border: 1px solid;
+  border-color: #dfdfdf #000000 #000000 #dfdfdf;
+}
+
+.era-calendar-nav-prev,
+.era-calendar-nav-next {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  padding: 2px 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  min-width: 20px;
+}
+
+.era-calendar-nav-prev:active,
+.era-calendar-nav-next:active {
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+}
+
+.era-calendar-month-year {
+  color: white;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.era-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 2px;
+  padding: 2px;
+  background: #c0c0c0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.era-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  padding: 2px;
+  background: #c0c0c0;
+}
+
+.era-calendar-day {
+  padding: 4px 2px;
+  text-align: center;
+  background: #c0c0c0;
+  border: 1px solid #c0c0c0;
+  cursor: pointer;
+  font-size: 10px;
+  user-select: none;
+}
+
+.era-calendar-day:hover {
+  background: #000080;
+  color: white;
+  border: 1px solid #dfdfdf;
+}
+
+.era-calendar-day.empty {
+  cursor: default;
+  background: #c0c0c0;
+}
+
+.era-calendar-day.empty:hover {
+  background: #c0c0c0;
+  color: #000;
+  border: 1px solid #c0c0c0;
+}
+
+.era-calendar-day.today {
+  background: #dfdfdf;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  font-weight: bold;
+}
+
+/* Era Calendar Shortcuts */
+.era-calendar-shortcuts {
+  margin-top: 8px;
+  padding: 4px;
+  border-top: 1px solid #808080;
+  background: #c0c0c0;
+}
+
+.era-shortcuts-title {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 4px;
+  padding: 2px;
+  letter-spacing: 0.05em;
+}
+
+.era-shortcuts-buttons {
+  display: flex;
+  gap: 2px;
+  justify-content: space-between;
+}
+
+.era-shortcut-btn {
+  flex: 1;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  color: #000;
+  text-align: center;
+  user-select: none;
+  transition: all 0.1s;
+}
+
+.era-shortcut-btn:hover {
+  background: #dfdfdf;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+.era-shortcut-btn:active {
+  background: #c0c0c0;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+}
+
+/* Network Window */
+.era-web90s .network-window {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.era-web90s .menu-bar {
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 2px 4px;
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
+.era-web90s .toolbar {
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.era-web90s .toolbar-btn {
+  background: #c0c0c0;
+  border: 1px outset #c0c0c0;
+  padding: 2px 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.era-web90s .address-bar {
+  flex: 1;
+  background: white;
+  border: 1px inset #c0c0c0;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
+.era-web90s .content-area {
+  flex: 1;
+  display: flex;
+}
+
+.era-web90s .left-panel {
+  width: 30%;
+  background: #c0c0c0;
+  border-right: 1px solid #808080;
+  padding: 4px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
+.era-web90s .tree-item {
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.era-web90s .tree-item.sub {
+  margin-left: 16px;
+}
+
+.era-web90s .right-panel {
+  width: 70%;
+  background: white;
+  padding: 8px;
+}
+
+.era-web90s .computer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.era-web90s .computer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.era-web90s .computer.selected {
+  background: #000080;
+  color: white;
+}
+
+.era-web90s .computer::before {
+  content: "[PC]";
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+/* Connecting Animation */
+.era-web90s .connecting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.era-web90s .modem-dialog {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  padding: 16px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  width: 250px;
+}
+
+.era-web90s .progress-bar {
+  background: white;
+  border: 1px inset #c0c0c0;
+  height: 12px;
+  margin: 8px 0;
+  position: relative;
+}
+
+.era-web90s .progress-fill {
+  background: #000080;
+  height: 100%;
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* Shared Files Window */
+.era-web90s .shared-files {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.era-web90s .file-list {
+  flex: 1;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+}
+
+.era-web90s .file-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.era-web90s .file-row.selected {
+  background: #000080;
+  color: white;
+}
+
+.era-web90s .file-icon {
+  width: 16px;
+  text-align: center;
+  margin-right: 4px;
+}
+
+.era-web90s .file-name {
+  flex: 1;
+}
+
+.era-web90s .file-size {
+  text-align: right;
+  min-width: 60px;
+}
+
+.era-web90s .status-bar {
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
+.era-web90s .folder-content {
+  margin-left: 16px;
+}
+
+.era-web90s .toast {
+  position: fixed;
+  bottom: 40px;
+  right: 8px;
+  background: #ffffe1;
+  border: 1px solid #000;
+  padding: 8px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+  max-width: 200px;
+}
+
+/* ── Era 4: Social ── */
+#era4 {
+  background: var(--social-bg);
+  font-family: var(--social-font);
+  min-height: 100vh;
+}
+
+.social-topbar {
+  background: var(--social-blue);
+  color: var(--social-white);
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.social-logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.social-nav-items {
+  display: flex;
+  gap: 2rem;
+}
+
+.social-nav-items span {
+  cursor: none;
+  transition: color 0.3s ease;
+}
+
+.social-nav-items span:hover {
+  text-decoration: underline;
+}
+
+.social-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-card {
+  background: var(--social-white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.profile-avatar {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.profile-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-meta {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.social-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.post-card {
+  background: var(--social-white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.post-avatar {
+  font-size: 2rem;
+}
+
+.post-user {
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.post-text {
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.post-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.like-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: none;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.like-btn.liked {
+  background: var(--social-blue);
+  color: var(--social-white);
+  border-color: var(--social-blue);
+}
+
+.comment-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: none;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.post-you {
+  border-left: 4px solid var(--social-blue);
+}
+
+/* ── Era 5: Modern ── */
+#era5 {
+  background: var(--modern-bg);
+  font-family: var(--modern-font);
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+}
+
+.scan-readout {
+  background: var(--modern-glass);
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  backdrop-filter: blur(20px);
+  max-width: 600px;
+}
+
+.scan-title {
+  font-family: var(--arpa-font);
+  color: var(--modern-accent);
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.blink-cursor {
+  animation: blink 1s ease-in-out infinite;
+}
+
+.scan-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.scan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px dotted var(--modern-border);
+}
+
+.scan-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-family: var(--arpa-font);
+}
+
+.scan-value {
+  color: var(--modern-accent);
+  font-weight: 600;
+  font-family: var(--arpa-font);
+}
+
+.modern-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.stat-card {
+  background: var(--modern-glass);
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-num {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--modern-accent);
+  margin-bottom: 0.5rem;
+  font-family: var(--arpa-font);
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.ai-chat {
+  background: var(--modern-glass);
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+}
+
+.ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ai-message {
+  max-width: 70%;
+  padding: 1rem;
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+.ai-message.ai-user {
+  align-self: flex-end;
+  background: var(--modern-accent);
+  color: var(--modern-bg);
+}
+
+.ai-message.ai-ai {
+  align-self: flex-start;
+  background: var(--modern-glass);
+  border: 1px solid var(--modern-border);
+}
+
+.ai-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ai-input {
+  flex: 1;
+  background: var(--modern-glass);
+  border: 1px solid var(--modern-border);
+  border-radius: 8px;
+  padding: 0.8rem;
+  color: var(--social-white);
+  font-family: var(--modern-font);
+  outline: none;
+}
+
+.ai-input:focus {
+  border-color: var(--modern-accent);
+}
+
+.ai-send {
+  background: var(--modern-accent);
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  color: var(--modern-bg);
+  font-weight: bold;
+  cursor: none;
+  transition: transform 0.3s ease;
+}
+
+.ai-send:hover {
+  transform: scale(1.05);
+}
+
+#era6 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--modern-bg);
+}
+
+.closing-screen {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.closing-year {
+  font-family: var(--arpa-font);
+  font-size: 1.2rem;
+  color: var(--modern-accent);
+  margin-bottom: 1rem;
+}
+
+.closing-message {
+  font-family: var(--web-font);
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--social-white);
+  margin: 1rem 0;
+  text-shadow: 0 0 20px var(--modern-accent);
+}
+
+.closing-fade {
+  animation: fade-in 2s ease-in;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.closing-divider {
+  font-family: var(--arpa-font);
+  color: var(--modern-accent);
+  font-size: 2rem;
+  margin: 2rem 0;
+}
+
+.closing-sub {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 2rem 0;
+  font-style: italic;
+}
+
+.closing-credit {
+  font-family: var(--arpa-font);
+  color: var(--modern-accent);
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #cursor { display: none; }
+  body { cursor: auto; }
+
+  .social-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .modern-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .closing-message {
+    font-size: 3rem;
+  }
+
+  .terminal-window {
+    height: 70vh;
+  }
+
+  .geocities-page {
+    padding: 1rem;
+  }
+
+  .ai-chat {
+    height: 300px;
+  }
+}
+
+@media (768px <= width <= 1024px) {
+  .social-layout {
+    grid-template-columns: 250px 1fr;
+  }
+
+}
